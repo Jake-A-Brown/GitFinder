@@ -6,7 +6,7 @@ const UsersContainer = ({ users }) => {
   return (
     <div className="flex gap-5 flex-wrap justify-center py-5">
       {users &&
-        users.map(
+        users?.map(
           (user, idx) =>
             user?.login && (
               <div
