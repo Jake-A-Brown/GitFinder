@@ -2,12 +2,10 @@
 import React from "react";
 import {Link} from "react-router-dom";
 
-// eslint-disable-next-line react/prop-types
 const UsersContainer = ({ users }) => {
   return (
     <div className="flex gap-5 flex-wrap justify-center py-5">
       {users &&
-        // eslint-disable-next-line react/prop-types
         users.map(
           (user, idx) =>
             user?.login && (
