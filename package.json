@@ -1,7 +1,6 @@
 {
   "name": "github-profile-finder",
   "private": true,
-  "homepage": "https://jake-a-brown.github.io/GitFinder",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
