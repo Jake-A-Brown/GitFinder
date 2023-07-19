@@ -1,9 +1,10 @@
-// eslint-disable-next-line no-unused-vars
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Tabs from '../components/Tabs';
-import Repo from '../components/Repo';
-import Events from '../components/Events';
+// eslint-disable-next-line no-unused-vars
+import PropTypes from "prop-types"; // Import prop-types
+import Tabs from "../components/Tabs";
+import Repo from "../components/Repo";
+import Events from "../components/Events";
 import UsersContainer from "../components/UsersContainer";
 import Loading from "../components/Loading";
 
@@ -12,6 +13,7 @@ const UserInfo = () => {
   const [type, setType] = useState("repos");
   const [infos, setInfos] = useState([]);
   const [loading, setLoading] = useState(null);
+  const [error, setError] = useState(null); // Add error state
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -19,19 +21,41 @@ const UserInfo = () => {
 
   async function GetUserInfo() {
     setLoading(true);
-    const res = await fetch(BaseURL + pathname);
-    const data = await res.json();
-    setUser(() => [data]);
-    setLoading(null);
+    setError(null); // Clear any previous errors
+    try {
+      const res = await fetch(BaseURL + pathname);
+      if (!res.ok) {
+        setError("User not found"); // Set error message if response is not OK
+        setLoading(false); // Stop loading
+        return;
+      }
+      const data = await res.json();
+      setUser(() => [data]);
+      setLoading(false);
+    } catch (err) {
+      setError("An error occurred"); // Set error message if an error occurs
+      setLoading(false); // Stop loading
+    }
   }
 
-  async function GetUrls(){
+  async function GetUrls() {
     setUser([]);
     setLoading(true);
-    const res = await fetch(BaseURL+pathname+`/${type}`);
-    const data = await res.json();
-    setInfos(data);
-    setLoading(null);
+    setError(null); // Clear any previous errors
+    try {
+      const res = await fetch(BaseURL + pathname + `/${type}`);
+      if (!res.ok) {
+        setError("User data not available"); // Set error message if response is not OK
+        setLoading(false); // Stop loading
+        return;
+      }
+      const data = await res.json();
+      setInfos(data);
+      setLoading(false);
+    } catch (err) {
+      setError("An error occurred"); // Set error message if an error occurs
+      setLoading(false); // Stop loading
+    }
   }
 
   useEffect(() => {
@@ -48,8 +72,9 @@ const UserInfo = () => {
       >
         BACK
       </button>
+      {error && <div>{error}</div>} {/* Display error message */}
       {user &&
-        user?.map((uinfo, i) => (
+        user.map((uinfo, i) => (
           <div
             key={i}
             className="flex justify-center 
@@ -84,7 +109,8 @@ const UserInfo = () => {
               </h1>
               <a
                 href={uinfo?.html_url}
-                target="blank"
+                target="_blank"
+                rel="noopener noreferrer" // Add rel attribute for security
                 className="text-gray-200 font-semibold rounded cursor-pointer 
                         px-4 py-1 bg-teal-600 my-3 tracking-wide"
               >
@@ -97,19 +123,19 @@ const UserInfo = () => {
         <Tabs type={type} setType={setType} />
       </div>
       {loading && <Loading />}
-      {type=== 'repos'&& 
+      {type === "repos" && (
         <div className="grid md:grid-cols-2 grid-cols-1 gap-7 w-10/13 mx-auto">
-            {infos && <Repo repos={infos} />}
-        </div>
-      }
-      {type=== 'received_events'&& (
-        <div className="grid md:grid-cols-2 grid-cols-1 gap-7 w-10/13 mx-auto">
-            {infos && <Events events={infos} />}
+          {infos && <Repo repos={infos} />}
         </div>
       )}
-       {type=== 'followers'&& (
+      {type === "received_events" && (
+        <div className="grid md:grid-cols-2 grid-cols-1 gap-7 w-10/13 mx-auto">
+          {infos && <Events events={infos} />}
+        </div>
+      )}
+      {type === "followers" && (
         <div>
-            <UsersContainer users={infos} />
+          <UsersContainer users={infos} />
         </div>
       )}
     </div>

@@ -1,12 +1,12 @@
-// eslint-disable-next-line no-unused-vars
 import React from "react";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types"; // Import prop-types
 
 const UsersContainer = ({ users }) => {
   return (
     <div className="flex gap-5 flex-wrap justify-center py-5">
       {users &&
-        users?.map(
+        users.map(
           (user, idx) =>
             user?.login && (
               <div
@@ -22,18 +22,29 @@ const UsersContainer = ({ users }) => {
                 <h1 className="text-xl">{user?.login}</h1>
                 <h1 className="text-xs text-teal-400">{user?.name}</h1>
                 <Link to={`/${user?.login}`}>
-                <span
-                  className="text-gray-200 bg-teal-600 my-3 
+                  <span
+                    className="text-gray-200 bg-teal-600 my-3 
                 font-semibold block py-1 px-4 tracking-wide rounded"
-                >
-                  View
-                </span>
+                  >
+                    View
+                  </span>
                 </Link>
               </div>
             )
         )}
     </div>
   );
+};
+
+// Add prop validation for the 'users' prop
+UsersContainer.propTypes = {
+  users: PropTypes.arrayOf(
+    PropTypes.shape({
+      login: PropTypes.string,
+      avatar_url: PropTypes.string,
+      name: PropTypes.string,
+    })
+  ),
 };
 
 export default UsersContainer;
